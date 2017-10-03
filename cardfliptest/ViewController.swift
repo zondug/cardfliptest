@@ -10,20 +10,21 @@ import UIKit
 
 class ViewController: UIViewController {
 
+	// make a view
 	var myview = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 200))
 	
-	let a = UIImageView(image: #imageLiteral(resourceName: "cardback"))
-	let b = UIImageView(image: #imageLiteral(resourceName: "club_A"))
+	// and front and back of card view
+	let a = UIImageView(image: #imageLiteral(resourceName: "cardback")) // is back
+	let b = UIImageView(image: #imageLiteral(resourceName: "club_A")) // is front
 	
-	var showingBack = true
+	var showingBack = true // currently back side
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		
+		// put those 2 cards front and back to a view
 		a.frame = myview.bounds
 		b.frame = myview.bounds
-		
 		myview.addSubview(a)
 		
 		myview.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
@@ -31,12 +32,18 @@ class ViewController: UIViewController {
 
 	}
 	
+	// if tapped 
 	func tap(gesture: UITapGestureRecognizer) {
+		
+		// checking current situation of cards
 		if (showingBack) {
 			
+			// from back to front
 			UIView.transition(from: a, to: b, duration: 0.3, options: UIViewAnimationOptions.transitionFlipFromRight, completion: nil)
 			showingBack = false
 		} else {
+			
+			// from front to back
 			UIView.transition(from: b, to: a, duration: 0.3, options: UIViewAnimationOptions.transitionFlipFromRight, completion: nil)
 			showingBack = true
 		}
