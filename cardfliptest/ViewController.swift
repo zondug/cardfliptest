@@ -11,70 +11,78 @@ import UIKit
 class ViewController: UIViewController {
 
 	// make a view
-	var myview = UIView()
+	var cardview = UIView()
 	
-	let transitioningLayer = CATextLayer()
+	let transitioningLayer = CALayer()
 
-	// and front and back of card view
-	let a = UIImageView(image: #imageLiteral(resourceName: "cardback")) // is back
-	let b = UIImageView(image: #imageLiteral(resourceName: "club_A")) // is front
+	let backImage = UIImage(named: "cardback.png")
+	let frontImage = UIImage(named: "club_A.png")
 	
-	var showingBack = true // currently back side
+	let backview: UIImageView = {
+		let view = UIImageView(image: #imageLiteral(resourceName: "cardback"))
+		return view
+	}()
+	let frontview: UIImageView = {
+		let view = UIImageView(image: #imageLiteral(resourceName: "club_A"))
+		return view
+	}()
+	
+	/// **True**: currently back side
+	var showingBack = true
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		// put those 2 cards front and back to a view
-		myview.frame.origin = CGPoint(x: self.view.center.x - a.frame.width/2, y: self.view.center.y - a.frame.height/2)
-		myview.frame.size = a.bounds.size
-		myview.addSubview(a)
+		// put those 2 cards front and back to a same view(myview)
+		cardview.frame.origin = CGPoint(x: self.view.center.x - backview.frame.width/2, y: self.view.center.y - backview.frame.height/2)
+		cardview.frame.size = backview.bounds.size
+		cardview.addSubview(backview)
 		
-		myview.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
-		view.addSubview(myview)
-		
-//		transitioningLayer.frame = myview.frame
-//		myview.layer.addSublayer(transitioningLayer)
+		view.addSubview(cardview)
 
 	}
 	
-	// if tapped 
-	func tap(gesture: UITapGestureRecognizer) {
-		
+	@IBAction func viewTransitionButton(_ sender: UIButton) {
 		// checking current situation of cards
 		if (showingBack) {
-			
-			// from back to front
-			UIView.transition(from: a, to: b, duration: 0.3, options: .transitionFlipFromRight, completion: nil)
-//			UIView.transition(from: a, to: b, duration: 0.3, options: .transitionCurlUp, completion: nil)
-//			cardTransition()
+
+			UIView.transition(from: backview, to: frontview, duration: 0.3, options: .transitionFlipFromRight, completion: nil)
+//			UIView.transition(from: backview, to: frontview, duration: 0.3, options: .transitionCurlUp, completion: nil)
+
 			showingBack = false
 		} else {
 			
-			// from front to back
-			UIView.transition(from: b, to: a, duration: 0.3, options: .transitionFlipFromRight, completion: nil)
+			UIView.transition(from: frontview, to: backview, duration: 0.3, options: .transitionFlipFromRight, completion: nil)
 			
-//			cardTransition()
 			showingBack = true
 		}
 	}
+
+	@IBAction func layerTransitionButton(_ sender: UIButton) {
+				layerTransition()
+	}
 	
-	// How to user CATransition
-	func cardTransition() {
-		let transition = CATransition()
-		transition.duration = 0.7
+	// studying How to user CATransition
+	func layerTransition() {
 		
-		transition.type = "pageCurl"
+		transitioningLayer.frame = cardview.frame
+		transitioningLayer.contentsGravity = kCAGravityResizeAspect
+
+		CATransaction.begin()
+
+		let transition = CATransition()
+		
+		transition.duration = 0.3
+		
+		transition.type = "flip"
 		transition.subtype = kCATransitionFromRight
 		
-		transitioningLayer.add(transition, forKey: "transition")
+		cardview.layer.add(transition, forKey: nil)
+		transitioningLayer.contents = frontImage
+		cardview.layer.addSublayer(transitioningLayer)
 
+		CATransaction.commit()
 	}
-	
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
-		// Dispose of any resources that can be recreated.
-	}
-
 
 }
 
